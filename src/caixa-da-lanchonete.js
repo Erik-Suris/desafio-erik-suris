@@ -2,7 +2,7 @@ class CaixaDaLanchonete {
 
     calcularValorDaCompra(metodoDePagamento, itens) {
         
-        if (itens.length===0) return 'Não há itens no carrinho de compra!'
+        if (itens.length === 0) return 'Não há itens no carrinho de compra!'
 
         let desconto
 
@@ -57,40 +57,31 @@ class CaixaDaLanchonete {
             }
         ]
 
-        const carrinho = []
-
+        const itensDoCarrinho = []
         let valorDaCompra = 0
+
         for (let item of itens) {
 
             const splitItem = item.split(',')
 
             let quantidade = Number(splitItem[1])
 
-            if (quantidade===0) return 'Quantidade inválida!'
+            if (quantidade <= 0) return 'Quantidade inválida!'
 
             let codigoQuery = splitItem[0]
 
-            carrinho.push(codigoQuery)
+            itensDoCarrinho.push(codigoQuery)
 
-            let indiceDoCardapio = cardapio.findIndex(itemDoCardapio => codigoQuery===itemDoCardapio.codigo)
+            let indiceDoCardapio = cardapio.findIndex(itemDoCardapio => codigoQuery === itemDoCardapio.codigo)
 
-            if (indiceDoCardapio===-1) return 'Item inválido!'
+            if (indiceDoCardapio === -1) return 'Item inválido!'
 
             let itemDoCardapio = cardapio[indiceDoCardapio]
 
-            if (itemDoCardapio.codigo==='chantily') {
+            if (itemDoCardapio.codigo === 'chantily' && !itensDoCarrinho.includes('cafe')) return 'Item extra não pode ser pedido sem o principal'
+            else if (itemDoCardapio.codigo === 'queijo' && !itensDoCarrinho.includes('sanduiche')) return 'Item extra não pode ser pedido sem o principal'
 
-                if (!carrinho.includes('cafe')) return 'Item extra não pode ser pedido sem o principal'
-
-            } else if (itemDoCardapio.codigo==='queijo') {
-
-                if (!carrinho.includes('sanduiche')) return 'Item extra não pode ser pedido sem o principal'
-
-            }
-
-            let valor = itemDoCardapio.valor
-
-            valorDaCompra += valor * quantidade
+            valorDaCompra += itemDoCardapio.valor * quantidade
         }
 
         let valorDaCompraDescontado = valorDaCompra * (1 - desconto)
@@ -98,8 +89,6 @@ class CaixaDaLanchonete {
         return parseFloat(valorDaCompraDescontado.toFixed(2)).toLocaleString("pt-BR", {
             style:"currency",
             currency:"BRL",
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
         });
 
     }
